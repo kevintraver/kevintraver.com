@@ -16,6 +16,7 @@ links = [
   { mastodon = "https://mastodon.social/@kevintraver" },
   { github = "https://github.com/kevintraver" },
   { instagram = "https://instagram.com/kevintraver" },
+  { threads = "https://www.threads.net/@kevintraver" },
 ]
 
 [module]
