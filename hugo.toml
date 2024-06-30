@@ -10,15 +10,15 @@ enableEmoji = true
 disableKinds = ["taxonomy", "term"]
 
 [author]
-  name = "Kevin Traver"
+name = "Kevin Traver"
 
-  links = [
-    { mastodon = "https://mastodon.social/@kevintraver" },
-    { github = "https://github.com/kevintraver" },
-    { instagram = "https://instagram.com/kevintraver" }
-  ]
+links = [
+  { mastodon = "https://mastodon.social/@kevintraver" },
+  { github = "https://github.com/kevintraver" },
+  { instagram = "https://instagram.com/kevintraver" },
+]
 
 [module]
-  [module.hugoVersion]
-    extended = false
-    min = "0.86.1"
+[module.hugoVersion]
+extended = false
+min = "0.86.1"
