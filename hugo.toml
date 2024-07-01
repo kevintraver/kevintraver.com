@@ -9,7 +9,7 @@ copyright = "2024"
 enableEmoji = true
 disableKinds = ["taxonomy", "term"]
 
-[author]
+[params.author]
 name = "Kevin Traver"
 
 links = [
