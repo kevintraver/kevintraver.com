@@ -13,10 +13,9 @@ disableKinds = ["taxonomy", "term"]
 name = "Kevin Traver"
 
 links = [
-  { mastodon = "https://mastodon.social/@kevintraver" },
+  { x = "https://x.com/kevintraver" },
   { github = "https://github.com/kevintraver" },
   { instagram = "https://instagram.com/kevintraver" },
-  { threads = "https://www.threads.net/@kevintraver" },
 ]
 
 [module]
