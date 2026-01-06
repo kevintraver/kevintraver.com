@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const panes = [
 	{
-		title: "apps I use daily",
+		title: "some of my favorite mac apps",
 		command: "ls -la /Applications",
 		items: [
 			{
@@ -71,7 +71,7 @@ const panes = [
 		],
 	},
 	{
-		title: "dev tools",
+		title: "my essential dev tools",
 		command: "brew list | grep favorites",
 		items: [
 			{
