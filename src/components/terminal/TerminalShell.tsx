@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export type TabId = "home" | "projects" | "dev" | "social";
 
@@ -25,17 +26,32 @@ interface TerminalShellProps {
 
 export function TerminalShell({ children }: TerminalShellProps) {
   const pathname = usePathname();
+  const [isMaximized, setIsMaximized] = useState(false);
 
   return (
-    <div className="min-h-screen bg-tn-bg-dark p-4 md:p-8">
-      <div className="max-w-6xl mx-auto h-[calc(100vh-4rem)] flex flex-col rounded-xl overflow-hidden border border-tn-bg-highlight shadow-2xl">
+    <div
+      className={`min-h-screen bg-tn-bg-dark transition-all duration-300 ${
+        isMaximized ? "p-0" : "p-4 md:p-8"
+      }`}
+    >
+      <div
+        className={`flex flex-col overflow-hidden border border-tn-bg-highlight shadow-2xl transition-all duration-300 ${
+          isMaximized
+            ? "h-screen w-screen rounded-none"
+            : "max-w-6xl mx-auto h-[calc(100vh-4rem)] rounded-xl"
+        }`}
+      >
         {/* Title bar */}
         <div className="flex items-center gap-2 px-4 py-3 bg-tn-bg-highlight/80 border-b border-tn-bg-highlight">
           {/* Traffic lights */}
           <div className="flex gap-1.5">
             <div className="w-3 h-3 rounded-full bg-tn-red hover:bg-tn-red/80 transition-colors cursor-pointer" />
             <div className="w-3 h-3 rounded-full bg-tn-yellow hover:bg-tn-yellow/80 transition-colors cursor-pointer" />
-            <div className="w-3 h-3 rounded-full bg-tn-green hover:bg-tn-green/80 transition-colors cursor-pointer" />
+            <button
+              onClick={() => setIsMaximized(!isMaximized)}
+              className="w-3 h-3 rounded-full bg-tn-green hover:bg-tn-green/80 transition-colors cursor-pointer"
+              aria-label={isMaximized ? "Exit fullscreen" : "Enter fullscreen"}
+            />
           </div>
           {/* Window title */}
           <div className="flex-1 text-center">
