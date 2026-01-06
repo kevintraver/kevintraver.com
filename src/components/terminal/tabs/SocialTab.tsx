@@ -75,14 +75,14 @@ export function SocialTab() {
           ))}
 
           {/* Social links as dig records */}
-          <div className="my-4 space-y-2">
+          <div className="my-4 space-y-3">
             {socials.map((social) => (
               <a
                 key={social.name}
                 href={social.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="grid grid-cols-[100px_24px_1fr] items-center gap-4 py-2 px-2 -mx-2 rounded hover:bg-tn-bg-highlight/30 transition-all group"
+                className="pl-3 py-1 border-l border-tn-bg-highlight grid grid-cols-[80px_24px_1fr] items-center gap-3 hover:border-tn-blue transition-colors"
               >
                 <span className="text-tn-green">{social.name}</span>
                 <Image
@@ -92,7 +92,7 @@ export function SocialTab() {
                   height={20}
                   className="flex-shrink-0"
                 />
-                <span className="text-tn-cyan group-hover:underline">
+                <span className="text-tn-cyan hover:underline">
                   <span className="hidden md:inline">{social.url.replace("https://", "")}</span>
                   <span className="md:hidden">@kevintraver</span>
                 </span>
