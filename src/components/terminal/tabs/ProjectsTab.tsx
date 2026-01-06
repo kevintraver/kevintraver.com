@@ -14,7 +14,7 @@ const panes = [
   },
   {
     title: "raycast extensions I've built",
-    command: "ls ~/projects/raycast",
+    command: "curl https://raycast.com/kevintraver",
     items: [
       { name: "MCP Edit", description: "Quickly edit MCP configuration files", icon: "/icons/mcp-edit.png" },
       { name: "URL Resolver", description: "Resolve URLs using DNS-over-HTTPS", icon: "/icons/url-resolver.png" },
