@@ -93,6 +93,12 @@ const panes = [
 				icon: "/icons/neovim.png",
 			},
 			{
+				name: "yabai",
+				description: "Tiling window manager for macOS",
+				url: "https://github.com/koekeishiya/yabai",
+				icon: "/icons/yabai.png",
+			},
+			{
 				name: "lazygit",
 				description: "Simple terminal UI for git commands",
 				url: "https://github.com/jesseduffield/lazygit",
