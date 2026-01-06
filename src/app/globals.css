@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+:root {
+  /* Tokyo Night Background */
+  --tn-bg: #1a1b26;
+  --tn-bg-dark: #16161e;
+  --tn-bg-highlight: #292e42;
+
+  /* Tokyo Night Foreground */
+  --tn-fg: #a9b1d6;
+  --tn-fg-dark: #9cacd6;
+
+  /* Tokyo Night Syntax Colors */
+  --tn-blue: #a8d0f7;
+  --tn-cyan: #7dcfff;
+  --tn-magenta: #bb9af7;
+  --tn-green: #9ece6a;
+  --tn-orange: #ff9e64;
+  --tn-red: #f7768e;
+  --tn-yellow: #e0af68;
+
+  /* Terminal Chrome */
+  --tn-terminal-bg: rgba(26, 27, 38, 0.85);
+  --tn-terminal-border: #292e42;
+
+  /* Semantic mapping */
+  --background: var(--tn-bg);
+  --foreground: var(--tn-fg);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-mono: var(--font-jetbrains-mono);
+
+  /* Tokyo Night colors as Tailwind utilities */
+  --color-tn-bg: var(--tn-bg);
+  --color-tn-bg-dark: var(--tn-bg-dark);
+  --color-tn-bg-highlight: var(--tn-bg-highlight);
+  --color-tn-fg: var(--tn-fg);
+  --color-tn-fg-dark: var(--tn-fg-dark);
+  --color-tn-blue: var(--tn-blue);
+  --color-tn-cyan: var(--tn-cyan);
+  --color-tn-magenta: var(--tn-magenta);
+  --color-tn-green: var(--tn-green);
+  --color-tn-orange: var(--tn-orange);
+  --color-tn-red: var(--tn-red);
+  --color-tn-yellow: var(--tn-yellow);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+/* Blinking cursor animation */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
