@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { usePageComplete } from "@/hooks/usePageComplete";
+import { EnterPrompt } from "../EnterPrompt";
 
 const panes = [
 	{
@@ -111,9 +113,10 @@ interface PaneProps {
 	pane: (typeof panes)[0];
 	index: number;
 	startDelay: number;
+	onComplete?: (index: number) => void;
 }
 
-function Pane({ pane, index, startDelay }: PaneProps) {
+function Pane({ pane, index, startDelay, onComplete }: PaneProps) {
 	const [typedCommand, setTypedCommand] = useState("");
 	const [showContent, setShowContent] = useState(false);
 	const [showCursor, setShowCursor] = useState(true);
@@ -143,6 +146,13 @@ function Pane({ pane, index, startDelay }: PaneProps) {
 			return () => clearTimeout(timer);
 		}
 	}, [started, typedCommand, pane.command]);
+
+	// Notify parent when pane is complete
+	useEffect(() => {
+		if (showContent) {
+			onComplete?.(index);
+		}
+	}, [showContent, index, onComplete]);
 
 	// Cursor blink
 	useEffect(() => {
@@ -210,15 +220,28 @@ function Pane({ pane, index, startDelay }: PaneProps) {
 }
 
 export function ApplicationsTab() {
+	const { isComplete, markPaneComplete } = usePageComplete(panes.length);
+
 	return (
-		<div className="md:h-full grid grid-cols-1 md:grid-cols-2">
-			{panes.map((pane, index) => (
-				                <Pane
-				                    key={pane.title}
-				                    pane={pane}
-				                    index={index}
-				                    startDelay={index * 400}
-				                />			))}
+		<div className="md:h-full flex flex-col">
+			<div className="flex-1 grid grid-cols-1 md:grid-cols-2">
+				{panes.map((pane, index) => (
+					<Pane
+						key={pane.title}
+						pane={pane}
+						index={index}
+						startDelay={index * 400}
+						onComplete={markPaneComplete}
+					/>
+				))}
+			</div>
+			{isComplete && (
+				<div className="mt-auto border-t border-tn-bg-highlight">
+					<div className="p-4 md:p-6">
+						<EnterPrompt />
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { EnterPrompt } from "../EnterPrompt";
 
 const sections = [
   { command: "whoami", output: ["Kevin Traver"] },
@@ -96,6 +97,9 @@ export function HomeTab() {
             </div>
           );
         })}
+
+        {/* Show Enter prompt when all sections are done */}
+        {currentSection >= sections.length && <EnterPrompt />}
       </div>
     </div>
   );

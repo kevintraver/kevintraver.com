@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { EnterPrompt } from "../EnterPrompt";
 
 const command = "dig @kevintraver";
 
@@ -105,6 +106,9 @@ export function SocialTab() {
               {line}
             </div>
           ))}
+
+          {/* Enter prompt */}
+          <EnterPrompt />
         </div>
       )}
     </div>
