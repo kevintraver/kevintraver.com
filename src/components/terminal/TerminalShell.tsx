@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export type TabId = "home" | "projects" | "dev" | "social";
 
@@ -27,6 +27,35 @@ interface TerminalShellProps {
 export function TerminalShell({ children }: TerminalShellProps) {
   const pathname = usePathname();
   const [isMaximized, setIsMaximized] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [shouldAnimate, setShouldAnimate] = useState(true);
+
+  // Persist maximized state to sessionStorage
+  useEffect(() => {
+    const stored = sessionStorage.getItem("terminal-maximized");
+    if (stored === "true") {
+      setIsMaximized(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem("terminal-maximized", String(isMaximized));
+  }, [isMaximized]);
+
+  const handleMinimize = () => {
+    setShouldAnimate(true);
+    setIsHidden(true);
+  };
+
+  const handleClose = () => {
+    setShouldAnimate(false);
+    setIsHidden(true);
+  };
+
+  const handleRestore = () => {
+    setShouldAnimate(true);
+    setIsHidden(false);
+  };
 
   return (
     <div
@@ -35,18 +64,30 @@ export function TerminalShell({ children }: TerminalShellProps) {
       }`}
     >
       <div
-        className={`flex flex-col overflow-hidden border border-tn-bg-highlight shadow-2xl transition-all duration-300 ${
+        className={`flex flex-col overflow-hidden border border-tn-bg-highlight shadow-2xl ${
+          shouldAnimate ? "transition-all duration-300" : ""
+        } ${
           isMaximized
             ? "h-screen w-screen rounded-none"
             : "max-w-6xl mx-auto h-[calc(100vh-4rem)] rounded-xl"
+        } ${
+          isHidden ? "scale-0 opacity-0 pointer-events-none" : "scale-100 opacity-100"
         }`}
       >
         {/* Title bar */}
         <div className="flex items-center gap-2 px-4 py-3 bg-tn-bg-highlight/80 border-b border-tn-bg-highlight">
           {/* Traffic lights */}
           <div className="flex gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-tn-red hover:bg-tn-red/80 transition-colors cursor-pointer" />
-            <div className="w-3 h-3 rounded-full bg-tn-yellow hover:bg-tn-yellow/80 transition-colors cursor-pointer" />
+            <button
+              onClick={handleClose}
+              className="w-3 h-3 rounded-full bg-tn-red hover:bg-tn-red/80 transition-colors cursor-pointer"
+              aria-label="Close terminal"
+            />
+            <button
+              onClick={handleMinimize}
+              className="w-3 h-3 rounded-full bg-tn-yellow hover:bg-tn-yellow/80 transition-colors cursor-pointer"
+              aria-label="Minimize terminal"
+            />
             <button
               onClick={() => setIsMaximized(!isMaximized)}
               className="w-3 h-3 rounded-full bg-tn-green hover:bg-tn-green/80 transition-colors cursor-pointer"
@@ -92,6 +133,21 @@ export function TerminalShell({ children }: TerminalShellProps) {
           {children}
         </div>
       </div>
+
+      {/* Terminal icon - shown when minimized/closed */}
+      <button
+        onClick={handleRestore}
+        className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${
+          shouldAnimate ? "transition-all duration-300" : ""
+        } ${
+          isHidden ? "scale-100 opacity-100" : "scale-0 opacity-0 pointer-events-none"
+        }`}
+        aria-label="Restore terminal"
+      >
+        <div className="w-20 h-20 bg-black rounded-2xl shadow-2xl flex items-center justify-center hover:scale-110 transition-transform cursor-pointer border border-tn-bg-highlight">
+          <span className="text-white text-2xl font-mono">&gt;_</span>
+        </div>
+      </button>
     </div>
   );
 }
