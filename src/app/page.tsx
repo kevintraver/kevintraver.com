@@ -8,11 +8,13 @@ export default function Home() {
         <h1 className="text-[length:clamp(36px,5.4vw,72px)] leading-[1.05] font-medium tracking-[-0.03em]">
           I build tools that make everyday things easier.
         </h1>
-        <p className="max-w-[580px] text-[length:clamp(18px,1.6vw,21px)] leading-[1.55] text-[#4A4A4A]">
-          For more than twelve years I’ve been making websites, apps and tools
-          for people and businesses. Have something in mind? I’d love to hear
-          about it.
-        </p>
+        <div className="flex max-w-[580px] flex-col gap-4 text-[length:clamp(18px,1.6vw,21px)] leading-[1.55] text-[#4A4A4A]">
+          <p>
+            I’ve spent over twelve years making websites and apps for people
+            and businesses.
+          </p>
+          <p>Have something in mind? I’d love to hear about it.</p>
+        </div>
         <a
           href="mailto:kevintraver@kevintraver.com"
           className="inline-flex min-h-14 items-center gap-3 self-start rounded-full bg-[#1D4ED8] px-7 text-lg font-medium text-white transition-colors hover:bg-[#1E3A8A]"
