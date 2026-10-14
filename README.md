@@ -1,14 +1,6 @@
 # kevintraver.com
 
-My personal portfolio site styled as a macOS terminal window with a Tokyo Night color theme.
-
-## Features
-
-- Route-based tab navigation (home, projects, dev, social)
-- Terminal chrome with traffic lights and tab bar
-- Projects showcase with Raycast extensions, startup, and fun projects
-- Dev tools and daily apps sections
-- Responsive mobile layout
+My personal site: a single page with a short intro and a way to get in touch.
 
 ## Tech Stack
 

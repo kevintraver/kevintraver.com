@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
-import { TerminalShell } from "@/components/terminal/TerminalShell";
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   title: "Kevin Traver",
-  description: "Developer, power user, dotfiles enthusiast",
+  description: "I build tools that make everyday things easier.",
 };
 
 export default function RootLayout({
@@ -20,8 +19,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${jetbrainsMono.variable} antialiased`}>
-        <TerminalShell>{children}</TerminalShell>
+      <body className={`${geist.variable} font-sans antialiased`}>
+        {children}
       </body>
     </html>
   );
