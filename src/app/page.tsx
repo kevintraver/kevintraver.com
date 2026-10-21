@@ -9,10 +9,7 @@ export default function Home() {
           I build tools that make everyday things easier.
         </h1>
         <div className="flex max-w-[580px] flex-col gap-4 text-[length:clamp(18px,1.6vw,21px)] leading-[1.55] text-[#4A4A4A]">
-          <p>
-            I’ve spent over twelve years making websites and apps for people
-            and businesses.
-          </p>
+          <p>I make websites and apps for people and businesses.</p>
           <p>Have something in mind? I’d love to hear about it.</p>
         </div>
         <a
