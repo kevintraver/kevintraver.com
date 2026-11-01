@@ -72,8 +72,6 @@ body { background: var(--surface); color: var(--ink); font-family: var(--font); 
 .card a { font-size: 15px; color: var(--accent); text-decoration: none; font-weight: 500; align-self: flex-start; }
 .card a:hover { text-decoration: underline; }
 
-.label { position: fixed; z-index: 6; pointer-events: none; background: rgba(245,246,248,.94); color: #0a0b0e; font-size: 13px; padding: 4px 10px; border-radius: 999px; transform: translate(-50%, -140%); white-space: nowrap; opacity: 0; transition: opacity .15s; }
-.label.on { opacity: 1; }
 
 .hint { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 6; font-size: 13px; color: var(--muted); background: rgba(22,25,33,.88); padding: 6px 14px; border-radius: 999px; transition: opacity .3s; white-space: nowrap; }
 .hint kbd { font-family: inherit; font-size: 12px; border: 1px solid #3a3e48; border-bottom-width: 2px; border-radius: 5px; padding: 0 5px; background: #1b1e26; color: var(--ink); }
@@ -97,7 +95,6 @@ body { background: var(--surface); color: var(--ink); font-family: var(--font); 
   <h1 id="title">Agent Skills</h1>
 </div>
 <div class="card" id="card" role="dialog" aria-live="polite"><h2 id="cName"></h2><p id="cDesc"></p><a id="cLink" href="#" target="_blank" rel="noopener"></a></div>
-<div class="label" id="label"></div>
 <div class="hint" id="hint">Drag, scroll or use arrow keys · <kbd>Esc</kbd> to put a key back</div>
 
 <script>
@@ -157,7 +154,7 @@ const CURATED = [
 ].map(([name, author, glyph, color, desc, path]) => ({ name, glyph, color, desc: desc + " By " + author + ".", link: GH + path, linkText: author + " on GitHub ↗" }));
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const stage = document.getElementById("stage"), plane = document.getElementById("plane"), dim = document.getElementById("dim");
-const card = document.getElementById("card"), label = document.getElementById("label");
+const card = document.getElementById("card");
 const ANGLE = 40 * Math.PI / 180, PERSP = 1500;
 const MAX_SPEED = 14;   // fastest the grid can glide, in plane px per frame
 
@@ -287,13 +284,13 @@ function hideIntro() { if (introGone) return; introGone = true; document.getElem
 function showIntro() { introGone = false; document.getElementById("intro").classList.remove("gone"); document.getElementById("introBg").classList.remove("gone"); }
 
 /* Input */
-let dragging = false, down = null, last = null, moved = 0, hoverQueued = false;
+let dragging = false, down = null, last = null, moved = 0;
 stage.addEventListener("pointerdown", e => { down = { x: e.clientX, y: e.clientY }; last = { ...down, t: performance.now() }; moved = 0; vel = { x: 0, y: 0 }; target = null; stage.setPointerCapture(e.pointerId); });
 stage.addEventListener("pointermove", e => {
-  if (!down) { if (!hoverQueued) { hoverQueued = true; const ev = e; requestAnimationFrame(() => { hoverQueued = false; hover(ev); }); } return; }
+  if (!down) return;
   const dx = e.clientX - last.x, dy = e.clientY - last.y; moved += Math.abs(dx) + Math.abs(dy);
   if (moved > 6) {
-    if (!dragging) { dragging = true; stage.classList.add("dragging"); hideIntro(); label.classList.remove("on"); }
+    if (!dragging) { dragging = true; stage.classList.add("dragging"); hideIntro(); }
     const sy = dy / Math.cos(ANGLE);
     cam.x -= dx; cam.y -= sy;
     const dt = Math.max(1, performance.now() - last.t);
@@ -318,14 +315,6 @@ stage.addEventListener("wheel", e => { e.preventDefault(); target = null; hideIn
   const k = e.deltaMode === 1 ? 16 : 1;
   vel.x += e.deltaX * k * 0.06; vel.y += e.deltaY * k * 0.06 / Math.cos(ANGLE);
   clearTimeout(wheelEnd); wheelEnd = setTimeout(deselect, 180); }, { passive: false });
-function hover(e) {
-  const t = document.elementFromPoint(e.clientX, e.clientY)?.closest(".tile");
-  if (!t || (sel && +t.dataset.c === sel.c && +t.dataset.r === sel.r)) { label.classList.remove("on"); return; }
-  label.textContent = t.getAttribute("aria-label");
-  const r = t.querySelector(".cap").getBoundingClientRect();
-  label.style.left = (r.left + r.width / 2) + "px"; label.style.top = r.top + "px"; label.classList.add("on");
-}
-stage.addEventListener("pointerleave", () => label.classList.remove("on"));
 addEventListener("keydown", e => {
   const k = e.key;
   if (k === "Escape") { deselect(); return; }
