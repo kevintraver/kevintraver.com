@@ -30,7 +30,7 @@ body { background: var(--surface); color: var(--ink); font-family: var(--font); 
 #plane { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; }
 
 .tile { position: absolute; left: 0; top: 0; width: var(--s); height: var(--s); transform-style: preserve-3d; border: 0; padding: 0; background: none; cursor: pointer; }
-.tile .shadow { position: absolute; inset: -12%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.8) 35%, rgba(0,0,0,0) 100%); transform: translate3d(0, 10px, 0); transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .5s; }
+.tile .shadow { position: absolute; inset: -14%; border-radius: 50%; background: radial-gradient(closest-side at 50% 54%, rgba(0,0,0,.82) 32%, rgba(0,0,0,0) 78%), radial-gradient(closest-side, var(--glow) 0%, rgba(150,180,255,0) 100%); transform: translate3d(0, 10px, 0); transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .5s; }
 .tile .cap { position: absolute; inset: 0; border-radius: 24%; background: linear-gradient(160deg, rgba(40, 46, 60, .9) 0%, rgba(16, 19, 26, .92) 100%);
   box-shadow: 0 6px 0 var(--cap-edge), 0 0 0 1px rgba(170, 195, 255, .14), inset 0 1px 0 rgba(255,255,255,.08); transform: translate3d(0, 0, 8px); transition: transform .5s cubic-bezier(.2,.8,.2,1);
   display: grid; place-items: center; }
@@ -40,13 +40,12 @@ body { background: var(--surface); color: var(--ink); font-family: var(--font); 
 .tile .face img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .tile .face.app { background: none; box-shadow: none; width: 80%; height: 80%; }
 #stage:not(.dragging) .tile:not(.sel):hover .cap { transform: translate3d(0, 0, 16px); }
-.tile .halo { position: absolute; inset: -18%; border-radius: 50%; background: radial-gradient(closest-side, var(--glow) 0%, rgba(150,180,255,0) 100%); pointer-events: none; }
 .tile .pool { position: absolute; inset: -45%; border-radius: 50%; background: radial-gradient(closest-side, var(--hue) 0%, transparent 100%); opacity: 0; transform: translate3d(0, 6px, 0) scale(.7); transition: opacity .4s, transform .5s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
 .tile.sel .cap { transform: translate3d(0, 0, 68px) scale(1.04); transition: transform .38s cubic-bezier(.34, 1.56, .64, 1); }
 .tile.sel .shadow { transform: translate3d(0, 24px, 0) scale(1.3); opacity: .55; }
 .tile.sel .pool { opacity: .55; transform: translate3d(0, 6px, 0) scale(1); }
-.tile .cap::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: #000; opacity: 0; transition: opacity .3s; pointer-events: none; }
-#plane.has-sel .tile:not(.sel) .cap::after { opacity: .22; }
+#dim { position: absolute; left: 0; top: 0; width: 12000px; height: 12000px; background: #000; opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; pointer-events: none; }
+#plane.has-sel #dim { opacity: .22; visibility: visible; transition: opacity .3s; }
 .tile:focus-visible { outline: none; }
 .tile:focus-visible .cap { box-shadow: 0 6px 0 var(--cap-edge), 0 0 0 4px var(--accent); }
 .tile.sel .cap { box-shadow: 0 6px 0 var(--cap-edge), 0 0 0 1px rgba(190, 210, 255, .28), 0 0 44px rgba(150, 180, 255, .35); }
@@ -91,7 +90,7 @@ body { background: var(--surface); color: var(--ink); font-family: var(--font); 
 </style>
 </head>
 <body>
-<div id="stage" aria-label="Explorable grid"><div id="plane"></div></div>
+<div id="stage" aria-label="Explorable grid"><div id="plane"><div id="dim"></div></div></div>
 <canvas id="dust" aria-hidden="true"></canvas>
 <div class="intro-bg" id="introBg"></div>
 <div class="intro" id="intro">
@@ -157,7 +156,7 @@ const CURATED = [
   ["reanimate", "NiazMorshed2007", "rewind", "mint", "Reverse-engineers an animation frame by frame, then checks the rebuild matches.", "NiazMorshed2007/reanimate"],
 ].map(([name, author, glyph, color, desc, path]) => ({ name, glyph, color, desc: desc + " By " + author + ".", link: GH + path, linkText: author + " on GitHub ↗" }));
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const stage = document.getElementById("stage"), plane = document.getElementById("plane");
+const stage = document.getElementById("stage"), plane = document.getElementById("plane"), dim = document.getElementById("dim");
 const card = document.getElementById("card"), label = document.getElementById("label");
 const ANGLE = 40 * Math.PI / 180, PERSP = 1500;
 const MAX_SPEED = 14;   // fastest the grid can glide, in plane px per frame
@@ -170,7 +169,7 @@ const tiles = new Map();  // "c,r" -> element
 let range = null;
 
 function sizes() {
-  S = Math.round(Math.max(64, Math.min(104, innerWidth / 11)));
+  S = Math.round(Math.max(64, Math.min(150, innerWidth / 13.5)));
   P = Math.round(S * 1.5); RY = Math.round(P * 0.86);
   plane.style.setProperty("--s", S + "px");
 }
@@ -192,16 +191,22 @@ function visibleRange() {
   const far = den > 50 ? h * PERSP / den : 4000;
   const near = h * PERSP / (PERSP * ca + h * sa);
   const half = w * (PERSP + far * sa) / PERSP;
-  return { r0: Math.floor((cam.y - far) / RY) - 2, r1: Math.ceil((cam.y + near) / RY) + 2, c0: Math.floor((cam.x - half) / P) - 2, c1: Math.ceil((cam.x + half) / P) + 2 };
+  return { r0: Math.floor((cam.y - far) / RY) - 1, r1: Math.ceil((cam.y + near) / RY) + 1, c0: Math.floor((cam.x - half) / P) - 1, c1: Math.ceil((cam.x + half) / P) + 1, w, sa };
 }
 
 function syncTiles(force) {
   const r = visibleRange();
-  if (!force && range && r.r0 === range.r0 && r.r1 === range.r1 && r.c0 === range.c0 && r.c1 === range.c1) return;
+  r.cx = Math.round(cam.x / (P / 2)); r.cy = Math.round(cam.y / (RY / 2));
+  if (!force && range && r.r0 === range.r0 && r.r1 === range.r1 && r.c0 === range.c0 && r.c1 === range.c1 && r.cx === range.cx && r.cy === range.cy) return;
   range = r;
   const keep = new Set();
   const frag = document.createDocumentFragment();
-  for (let row = r.r0; row <= r.r1; row++) for (let col = r.c0; col <= r.c1; col++) {
+  for (let row = r.r0; row <= r.r1; row++) {
+    // half-width of the screen, in plane px, at this row's depth (+ one key of slack)
+    const d = Math.max(0, cam.y - row * RY);
+    const hw = r.w * (PERSP + d * r.sa) / PERSP + P * 1.5;
+    const cA = Math.max(r.c0, Math.floor((cam.x - hw) / P)), cB = Math.min(r.c1, Math.ceil((cam.x + hw) / P));
+    for (let col = cA; col <= cB; col++) {
     const k = col + "," + row; keep.add(k);
     if (tiles.has(k)) continue;
     const it = itemAt(col, row), p = posOf(col, row);
@@ -211,10 +216,10 @@ function syncTiles(force) {
     el.tabIndex = -1;
     el.style.transform = `translate3d(${p.x - S / 2}px, ${p.y - S / 2}px, 0)`;
     el.style.setProperty("--hue", it.color ? C[it.color][1] : "#8fb0ff");
-    el.innerHTML = `<span class="halo"></span><span class="pool"></span><span class="shadow"></span><span class="cap">${faceHTML(it)}</span>`;
-    if (sel && sel.c === col && sel.r === row) el.classList.add("sel");
+    el.innerHTML = `<span class="shadow"></span><span class="cap">${faceHTML(it)}</span>`;
+    if (sel && sel.c === col && sel.r === row) { el.classList.add("sel"); const pool = document.createElement("span"); pool.className = "pool"; el.prepend(pool); }
     tiles.set(k, el); frag.appendChild(el);
-  }
+  } }
   for (const [k, el] of tiles) if (!keep.has(k)) { el.remove(); tiles.delete(k); }
   plane.appendChild(frag);
 }
@@ -222,6 +227,7 @@ function syncTiles(force) {
 function rebuild() { for (const el of tiles.values()) el.remove(); tiles.clear(); range = null; syncTiles(true); }
 
 /* Camera loop */
+let lastCam = "";
 function frame() {
   if (target) {
     const k = reduce ? 1 : 0.12;
@@ -232,8 +238,11 @@ function frame() {
     if (sp > MAX_SPEED) { vel.x *= MAX_SPEED / sp; vel.y *= MAX_SPEED / sp; }
     cam.x += vel.x; cam.y += vel.y; vel.x *= 0.92; vel.y *= 0.92;
   }
+  const camKey = cam.x.toFixed(2) + "," + cam.y.toFixed(2);
+  if (camKey !== lastCam) { lastCam = camKey;
   plane.style.transform = `rotateX(${ANGLE}rad) translate3d(${-cam.x}px, ${-cam.y}px, 0)`;
-  syncTiles(false);
+  dim.style.transform = `translate3d(${cam.x - 6000}px, ${cam.y - 6000}px, 34px)`;
+  syncTiles(false); }
   placeCard();
   requestAnimationFrame(frame);
 }
@@ -254,6 +263,7 @@ function select(c, r) {
   target = { x: p.x + (narrow ? 0 : Math.min(220, innerWidth * 0.16)), y: p.y + (narrow ? RY * 0.9 : -RY * 0.25) };
   vel = { x: 0, y: 0 };
   plane.classList.add("has-sel"); card.classList.add("on"); hideIntro();
+  if (el && !el.querySelector(".pool")) { const pool = document.createElement("span"); pool.className = "pool"; el.prepend(pool); }
   if (el) { el.dataset.anim = 1; setTimeout(() => { delete el.dataset.anim; }, 500); }
 }
 function deselect() { const el = selEl(); el && el.classList.remove("sel"); sel = null; plane.classList.remove("has-sel"); card.classList.remove("on"); }
@@ -277,10 +287,10 @@ function hideIntro() { if (introGone) return; introGone = true; document.getElem
 function showIntro() { introGone = false; document.getElementById("intro").classList.remove("gone"); document.getElementById("introBg").classList.remove("gone"); }
 
 /* Input */
-let dragging = false, down = null, last = null, moved = 0;
+let dragging = false, down = null, last = null, moved = 0, hoverQueued = false;
 stage.addEventListener("pointerdown", e => { down = { x: e.clientX, y: e.clientY }; last = { ...down, t: performance.now() }; moved = 0; vel = { x: 0, y: 0 }; target = null; stage.setPointerCapture(e.pointerId); });
 stage.addEventListener("pointermove", e => {
-  if (!down) { hover(e); return; }
+  if (!down) { if (!hoverQueued) { hoverQueued = true; const ev = e; requestAnimationFrame(() => { hoverQueued = false; hover(ev); }); } return; }
   const dx = e.clientX - last.x, dy = e.clientY - last.y; moved += Math.abs(dx) + Math.abs(dy);
   if (moved > 6) {
     if (!dragging) { dragging = true; stage.classList.add("dragging"); hideIntro(); label.classList.remove("on"); }
@@ -342,7 +352,7 @@ function fitIntroBg() {
   bg.style.left = (r.left - px) + "px"; bg.style.top = (r.top - py) + "px";
   bg.style.width = (r.width + px * 2) + "px"; bg.style.height = (r.height + py * 2) + "px";
 }
-addEventListener("resize", () => { sizes(); rebuild(); fitIntroBg(); });
+addEventListener("resize", () => { sizes(); rebuild(); lastCam = ""; fitIntroBg(); });
 document.fonts.ready.then(fitIntroBg); fitIntroBg();
 pickMult(); sizes(); syncTiles(true); frame();
 
