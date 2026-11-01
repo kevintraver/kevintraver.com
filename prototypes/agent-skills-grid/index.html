@@ -67,7 +67,7 @@ body { background: var(--surface); color: var(--ink); font-family: var(--font); 
 .switch button { border: 0; background: none; font: inherit; font-size: 14px; padding: 7px 14px; border-radius: 999px; color: var(--muted); cursor: pointer; }
 .switch button[aria-pressed="true"] { background: var(--ink); color: #0a0b0e; }
 
-.card { position: fixed; z-index: 7; width: min(290px, calc(100vw - 32px)); background: rgba(16,18,24,.84); border: 1px solid rgba(255,255,255,.09); border-radius: 18px;
+.card { position: fixed; z-index: 7; width: min(290px, calc(100vw - 32px)); background: #111319; border: 1px solid rgba(255,255,255,.09); border-radius: 18px;
   box-shadow: 0 24px 60px rgba(0,0,0,.6), 0 0 40px rgba(120,150,255,.08); padding: 18px 20px 16px; display: flex; flex-direction: column; gap: 8px;
   opacity: 0; transform: translateY(6px) scale(.98); transition: opacity .3s, transform .3s; pointer-events: none; }
 .card.on { opacity: 1; transform: none; pointer-events: auto; }
